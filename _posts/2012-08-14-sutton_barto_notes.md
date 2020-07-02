@@ -8,7 +8,7 @@ tags:
 read_time: false
 ---
 
-**aligned equation test (1):**
+**aligned equation test (2):**
 
 $$
 \begin{aligned}
