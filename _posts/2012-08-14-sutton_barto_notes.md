@@ -8,6 +8,19 @@ tags:
 read_time: false
 ---
 
+**aligned equation test (1):**
+
+$$
+\begin{aligned}
+V(s) &= \mathbb{E}[G_t \vert S_t = s] \\
+&= \mathbb{E} [R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots \vert S_t = s] \\
+&= \mathbb{E} [R_{t+1} + \gamma (R_{t+2} + \gamma R_{t+3} + \dots) \vert S_t = s] \\
+&= \mathbb{E} [R_{t+1} + \gamma G_{t+1} \vert S_t = s] \\
+&= \mathbb{E} [R_{t+1} + \gamma V(S_{t+1}) \vert S_t = s]
+\end{aligned}
+$$
+
+
 Being quarantined in NYC has given me the opportunity to finally work through [the classic text](http://incompleteideas.net/book/the-book-2nd.html) on reinforcement learning (RL). This summary of the text is intended for those interested in learning RL who are *not* interested in staying in their apartment for three months to learn it :grimacing:.
 
 
@@ -46,26 +59,15 @@ This is an undiscounted return because it equally weights all rewards. It is com
 
 $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \dots = \sum_{k=0}^\infty \gamma^k R_{t+k+1} $$
 
-# ALIGNED EQUATION TEST
 Note that we can define returns recursively. Such recursive relationships are critical to many important ideas in reinforcement learning:
 
-$$
-\begin{aligned}
-V(s) &= \mathbb{E}[G_t \vert S_t = s] \\
-&= \mathbb{E} [R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots \vert S_t = s] \\
-&= \mathbb{E} [R_{t+1} + \gamma (R_{t+2} + \gamma R_{t+3} + \dots) \vert S_t = s] \\
-&= \mathbb{E} [R_{t+1} + \gamma G_{t+1} \vert S_t = s] \\
-&= \mathbb{E} [R_{t+1} + \gamma V(S_{t+1}) \vert S_t = s]
-\end{aligned}
-$$
-
-<!-- $$  
+$$  
 \begin{align}
 G_t & = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \gamma^3R_{t+4} + \dots\\
 & = R_{t+1} + \gamma(R_{t+2} + \gamma R_{t+3} + \gamma^2R_{t+4} +\dots)\\
 & = R_{t+1} + \gamma G_{t+1}
 \end{align}
-$$ -->
+$$
 
 How can we maximize returns? A first thought might be to optimize the parameters of some policy with respect to the overall expected return (we'll get to these **policy gradient** methods later). An alternative approach is to learn how good different states are. We can then maximize returns by selecting actions that move us to the best states.
 
