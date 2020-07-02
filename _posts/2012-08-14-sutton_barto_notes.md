@@ -46,7 +46,8 @@ This is an undiscounted return because it equally weights all rewards. It is com
 
 $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \dots = \sum_{k=0}^\infty \gamma^k R_{t+k+1} $$
 
-**TEST 1:** Note that we can define returns recursively. Such recursive relationships are critical to many important ideas in reinforcement learning:
+# ALIGNED EQUATION TEST
+Note that we can define returns recursively. Such recursive relationships are critical to many important ideas in reinforcement learning:
 
 $$
 \begin{aligned}
