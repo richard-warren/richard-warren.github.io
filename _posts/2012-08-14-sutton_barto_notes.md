@@ -15,8 +15,7 @@ Being quarantined in NYC has given me the opportunity to finally work through [t
 {% include toc %}
 <br>
 
-
-# motivation
+## motivation
 Despite their neuro-inspired-namesakes, many modern deep learning algorithms can feel rather 'non-bioligcal'. Consider how living things learn. To teach my nephew the difference between cats and dogs, I *do not* show him thousands of cats and dogs until the (non-artificial) neural networks in his brain can distinguish them.
 
 Moreover, much of what he learns is via *direct interaction with the world*. He knows what he likes and doesn't like, and through trial in error he maximizes the good stuff and minimizes the bad stuff. Although this isn't the only way animals learn (despite what [some psychologists used to think](https://en.wikipedia.org/wiki/Behaviorism)), it is a powerful approach to navigating the world.
@@ -24,7 +23,7 @@ Moreover, much of what he learns is via *direct interaction with the world*. He 
 Reinforcement learning turns this approach into powerful learning algorithms that are [sometimes](https://deepmind.com/research/case-studies/alphago-the-story-so-far) [superhuman](https://deepmind.com/research/publications/playing-atari-deep-reinforcement-learning). [Sutton & Barto](http://incompleteideas.net/book/the-book-2nd.html) is the classic introductory text on reinforcement learning. The following is my summary of the text.
 
 
-# setup
+## setup
 In reinforcement learning an **agent** collects **reward** by acting in an **environment**. The **actions** of the agent, together with the dynamics of the environment, determine how the **state** of the world changes and the amount of reward the agent gets. The goal is to get lots of reward by selecting good actions. Concretely, the agent has a **policy** $\pi(a|s)$ that maps states to actions. More specifically, $\pi(a|s)$ defines a *probability distribution* over actions conditioned on the state. We want to find a policy that gives us as much reward as possible.
 
 At time $t$ the state of the environment is $S_t \in \mathcal{S}$ and an agent can take an action $A_t \in \mathcal{A}(s)$. The environment then emits a reward $R_{t+1} \in \mathbb{R}$ and a subsequent state, $S_{t+1}$. Notice how the reward is just a scalar. *From this sparse information the agent must learn to behave such that reward is maximized*. This should strike you as somewhat magical.
@@ -102,7 +101,7 @@ Note that for $v_{* }$ we only consider the action with the maximum return (maxi
 
 ![image](/images/sutton_barto_notes/backup_diagrams.png){: .align-center}
 
-# dynamic programming
+## dynamic programming
 
 We usually don't have complete access to the state of the world and its dynamics. When we do, *dynamic programming* can be used to iteratively converge on optimal policies. Generally, dynamic programming refers to algorithms in which a problem is decomposed into solvable sub-problems. If the same sub-problem is repeatedly encountered we can cache and re-use the solution.
 
@@ -118,8 +117,7 @@ But this leads to a problem. Our value function was defined with respect to $\pi
 
 ![image](reinforcement_learning/policy_iteration.png){width=".9\linewidth"}
 
-value iteration
----------------
+### value iteration
 
 As described above, after every policy improvement we need to iteratively improve our value function. How long do we need to iteratively improve the value function for a given policy? It turns out that even an imperfect but improved value function can help us improve the policy. In the extreme, we can update our value function with only a *single* iteration, and always act greedily with respect to that value function. This is called *value iteration*. It changes the problem, such that we are always working in value space and we ignore the policy until the very end, at which point the policy simply acts greedily with respect to the final value function. The update rule is: $$v_{k+1}(s) = \max_a \sum_{s',r} p(s',r|s,a) [r + \gamma v_k(s')]$$ Notice that the value function takes the max rather than the expectation across actions. This means the value function only cares about the best possible action we could take in a given state. The algorithm is:
 
@@ -127,22 +125,19 @@ As described above, after every policy improvement we need to iteratively improv
 
 In the algorithms presented above we sweep through all of the states to update our value function. But we could also perform these sweeps asynchronously or on-line, updating states that are actually visited by an agent. Critically, dynamically programming requires a perfect model of the dynamics of the world, which is usually not available!
 
-generalized policy iteration
-----------------------------
+## generalized policy iteration
 
 Many reinforcement learning algorithms can framed in a *generalized policy iteration* framework, wherein we bounce back and forth between optimizing our policy and our value function:
 
 ![image](reinforcement_learning/gpi.png){width=".5\linewidth"}
 
-monte carlo methods
-===================
+## monte carlo methods
 
 Dynamic programming requires an accurate model of the environment; for every state-action pair we need to know the probability distribution over subsequent state-reward pairs, $p(s',r|s,a)$. Welcome to the real world, whose dynamics are usually unknown.
 
 Whereas dynamic programming estimates values by averaging across all actions and subsequent states, *monte carlo* methods use a simpler strategy: average the returns from a bunch of samples. These estimates will be correct on average (no bias), and with enough samples they will be quite accurate. We can then do control by acting greedy with respect to our value function.
 
-prediction
-----------
+### prediction
 
 Here is a simple algorithm for Monte Carlo *prediction* (estimating $v_\pi(s)$ as opposed to optimizing $\pi$):
 
@@ -152,8 +147,7 @@ The annoying thing about monte carlo methods is that we need *full trajectories*
 
 Therefore, in this algorithm we must start at the *end* of a trajectory and move backwards, updating the value function only if we see a state that is the *first visit* to that state during the trajectory (this contrasts with *every visit* methods, which update the value function with every visit to a state in the trajectory).
 
-encouraging exploration
------------------------
+### encouraging exploration
 
 In dynamic programming we looped over all states to update our value function. In monte carlo methods we generate data by actually rolling out our policy. This is nice because updates to the value function will focus on states that are actually relevant to our policy. However, we run the risk of insufficient *exploration*.
 
@@ -163,8 +157,7 @@ Alternatively, we can learn stochastic policies that have a non-zero probability
 
 ![image](reinforcement_learning/mc_epsilon_soft.png){width=".9\linewidth"}
 
-off-policy prediction
----------------------
+### off-policy prediction
 
 A very powerful way to ensure that the state space is adequately explored is to have separate *behavior* and *target* policies. The behavior policy guides behavior during data acquisition whereas the target policy is actually being evaluated. This allows us to explore the value of states that are unlikely to be visited under the target policy.
 
@@ -176,8 +169,7 @@ $$V(s) = \frac{\sum_{t \in \mathcal{T}(s)} \rho_{t:T(t)-1} G_t}    {\sum_{t \in 
 
 ![image](reinforcement_learning/mc_offpolicy.png){width=".9\linewidth"}
 
-temporal difference learning
-============================
+## temporal difference learning
 
 Temporal difference learning is a model free approach in which we sample (like monte carlo) *and* bootstrap (like dynamic programming).
 
@@ -198,22 +190,19 @@ Monte Carlo gives a value of 0 to A, because every time we saw A there was a ret
 
 ![image](reinforcement_learning/td_series_model.png){width=".3\linewidth"}
 
-SARSA
------
+### SARSA
 
 r.075![image](reinforcement_learning/backup_sarsa.PNG){width="1\linewidth"}
 
-SARSA learns action-value functions using an update rule analogous to the state-value update rule described above. Given a **S**tate, we select an **A**ction, observe the **R**eward / subsequent **S**tate, and then bootstrap our action-value function using our policy to select the next **A**ction: $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha [R_{t+1}  + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t)]$$
+SARSA learns action-value functions using an update rule analogous to the state-value update rule described above. Given a **S** tate, we select an **A** ction, observe the **R** eward / subsequent **S** tate, and then bootstrap our action-value function using our policy to select the next **A** ction: $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha [R_{t+1}  + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t)]$$
 
-Q-learning
-----------
+### Q-learning
 
 r.1![image](reinforcement_learning/backup_qlearning.PNG){width="1\linewidth"}
 
 SARSA learns the action-value function associated with a given policy. The policy can then be improved by acting greedily with respect $q$. *Q-learning* is an off-policy algorithm that directly approximate $q_*$. To do this, we take the best action when bootstrapping, as opposed to the action chosen by our current policy: $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha [R_{t+1}  + \gamma \max_a Q(S_{t+1}, a) - Q(S_t, A_t)]$$
 
-expected SARSA
---------------
+### expected SARSA
 
 r.15 ![image](reinforcement_learning/backup_expectedsarsa.PNG){width="1\linewidth"}
 
@@ -221,8 +210,7 @@ In SARSA, $A_{t+1}$ is a random variable that is selected according to our polic
 
 $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha [R_{t+1}  + \gamma \sum_a \pi(a|S_{t+1}) Q(S_{t+1}, a) - Q(S_t, A_t)]$$
 
-n-step bootstrapping
-====================
+## n-step bootstrapping
 
 In Monte Carlo we sample entire trajectories. This method is low bias but has high variance due to sampling error. In TD(0) we sample one step and then bootstrap on our value function. This method has bias but much lower variance.
 
@@ -238,11 +226,9 @@ Intuitively, taking larger $n$ allows us to see further back when assigning cred
 
 ![image](reinforcement_learning/nstep_paths.png){width=".8\linewidth"}
 
-the big picture
-===============
+## the big picture
 
-breadth vs. depth
------------------
+### breadth vs. depth
 
 The methods we've applied so far vary in breadth and depth. Methods that bootstrap (DP and TD) are shallow in that they only step a little into the future before bootstrapping. Monte Carlo is deep in that it samples until the end of trajectories. Furthermore, methods that take expectations over actions are wide, such as DP, whereas both TD and Monte Carlo can be thought of as narrow because they rely on sampling rather than averaging over actions.
 
@@ -250,15 +236,13 @@ Methods exist in between these extremes and can be thought of as living in a spa
 
 ![image](reinforcement_learning/rl_bigpicture.PNG){width=".6\linewidth"}
 
-value function updates
-----------------------
+### value function updates
 
 The value function updates we've considered differ in whether they 1) update the state or action value function, 2) approximate the optimal or an arbitrary policy, and 3) rely on sample or expected updates. The different combinations of these three binary dimensions yield the following family of value function updates:
 
 ![image](reinforcement_learning/value_updates.PNG){width=".5\linewidth"}
 
-learning your model
-===================
+## learning your model
 
 Thus far we have discussed model-free algorithms and algorithms that require a model of the world, $p(s',r \mid a,a)$, such as dynamic programming. When utilizing models we can distinguish between *real* and *simulated* experience. Real experience results from interactions with the world (e.g. observing the consequences of taking action $a$ in state $s$), whereas simulated experience results from querying the model (e.g. the model predicts what would happen if the agent were to take action $a$ in state $s$). There is a related distinction between *planning* and *learning*. Planning uses a model (simulated experience) to find better actions, whereas learning relies upon real experience with the environment.
 
@@ -266,42 +250,31 @@ We can also consider algorithms that *learn* a model of the world through experi
 
 ![image](reinforcement_learning/planning_learning.PNG){width=".4\linewidth"}
 
-DynaQ
------
+### DynaQ
 
 DynaQ is a simple algorithm that utilizes both planning and learning. The agent takes actions (b,c), updates the value function based on the observed reward via Q-learning (direct RL; d), updates the model of the world based on that experience (using a simple lookup table in this example; e), then uses the model to generate simulated experience that further refines the value function (f):
 
 ![image](reinforcement_learning/dynaq.PNG){width="1\linewidth"}
 
-smarter state updates
-=====================
+## smarter state updates
 
 In the dynamic programming algorithms discussed previously we updated the value function by looping over and updating all states (or state-action pairs). However, states with very low value may be seldom/never visited under our policy. We may therefore benefit by focusing our updates on more important states.
 
-prioritized sweeping
---------------------
+### prioritized sweeping
 
 If an agent encounters a state which causes a large change in the value function (e.g. the state had a much higher or lower return than expected), we update this state accordingly. However, we should also update states that *led* to that state.
 
 Prioritized sweeping accomplishes this by maintaining a queue of state-actions for which there is a high change in the value function, sorted by the magnitude of that change. After every step in the environment, we loop through queue. For each state-action, we update the value function *and then loop through all state-actions predicted by the model to lead to that state*. Many of these state-actions will also have high return changes because they lead to a state with a high change. These state-actions are also added to the cue and the process is repeated until the queue is depleted.
 
-trajectory sampling
--------------------
+### trajectory sampling
 
 Rather than sweeping across all states, we can sample states according to how likely they are to be visited under the current policy. Although we don't know this distribution explicitly, we can approximate it by simply letting the agent interact with the world according to the policy, and update states/actions that are visited during these trajectories. Such *trajectory sampling* paired with the value-iteration dynamic programming algorithm results in *real-time dynamic programming*.
 
-decision-time planning
-======================
-
-In decision-time planning we explore a tree of possible outcomes resulting from different actions we could take at every state we reach. In *heuristic search* we can estimate the value of an action by taking the action, following a policy for a certain number of steps, and then bootstrapping on the value function at leaf nodes (this requires a model that we can use to generate these simulated trajectories). In *rollout algorithms* we use a monte carlo approach to estimate the value of each action, e.g. by taking that action many times and averaging the returns. *Monte carlo tree search* extends this idea by focusing on sub-trajectories that have higher estimated values, and extending the search tree selectiviely in these directions. This strategy was critical for the famous AlphaGo algorithm.
-
-value function approximation
-============================
+## value function approximation
 
 The tabular methods we have discussed thus far are limited when the action and/or state spaces are very large, and impossible when they are continuous. Value function approximation solves both problems by using a function to approximate the relationship between a representation of the state and the value of that state. A value function parameterized by weights $\mathbf{w}$ is denoted $\hat{v}(s, \mathbf{w})$.Note that there is a lot of flexibility in how we represent the state. In general, we will represent each state $s$ by a vector $\mathbf{x}(s)$.
 
-stochastic gradient descent
----------------------------
+### stochastic gradient descent
 
 We can learn the value function (i.e. its parameters $\mathbf{w}$) via gradient descent. This requires defining a loss functions and taking its gradient $\nabla$ with respect to $\mathbf{w}$. We will compute the mean squared error between the estimated and true value function, averaged across states with weights $u(s)$ ($\mu(s)$ is typically the *stationary distribution* of states under the current policy): $$\overline{VE}(\mathbf{w}) = \sum_{s \in \mathcal{S}} u(s) \left[v_\pi(s) - \hat{v}_\pi(s, \mathbf{w})\right]^2$$ We can make our value estimate more accurate by nudging $\mathbf{w}$ in the direction of the gradient. Because the states should be distributed according to $u(s)$, the expectation for these updates should be the true update. Recall that the gradient is a vector describing how each variable in a scalar valued function affects the output: $\nabla_\mathbf{w} f(\mathbf{w}) = \left( \frac{\partial f(\mathbf{w})}{\partial w_1}, \frac{\partial f(\mathbf{w})}{\partial w_2}, \dots, \frac{\partial f(\mathbf{w})}{\partial w_d} \right)^\top$. We will oftentimes omit the subscript in $\nabla_\mathbf{w}$.
 
@@ -309,8 +282,7 @@ Our stochastic gradient ascent algorithm will nudge $\mathbf{w}$ in the directio
 \mathbf{w_{t+1}} &= \mathbf{w_{t}} + \alpha \frac{1}{2} \nabla \left[v_\pi(s) - \hat{v}_\pi(S_t, \mathbf{w})\right]^2 \\
 &= \mathbf{w_{t}} + \alpha \left[{v_\pi(S_{t})} - \hat{v}_\pi(S_t, \mathbf{w})\right] \nabla \hat{v}_\pi(S_t, \mathbf{w}) & \scriptstyle{\text{chain rule}}\end{aligned}$$ So far so good, but if we knew $v_\pi(s)$ we wouldn't need to be reading this book! Instead we use a *target* to approximate $v_\pi(s)$. If the target is a real return, $G_t$, the updates will be unbiased because the value function is the expectation over returns. A gradient monte carlo algorithm therefore updates the weights according to: $$\mathbf{w_{t+1}} = \mathbf{w_{t}} + \alpha \left[{\color{blue}G_t} - \hat{v}_\pi(S_t, \mathbf{w})\right] \nabla \hat{v}_\pi(S_t, \mathbf{w})$$ We could alternatively use a TD(0) target : $$\mathbf{w_{t+1}} = \mathbf{w_{t}} + \alpha \left[{\color{blue}R_t + \gamma \hat{v}_\pi(S_{t+1}, \mathbf{w})} - \hat{v}_\pi(S_t, \mathbf{w})\right] \nabla \hat{v}_\pi(S_t, \mathbf{w})$$ There's a subtlety here: when we took the gradient above, the original target $v_\pi(s)$ did not depend on $\mathbf{w}$. But our esimated target, $\hat{v}(s, \mathbf{w})$, depends on $\mathbf{w}$. Using a bootstrapped target containing our estimated value function invalidates the math. This approach is therefore called *semi-gradient*. It still works in practice, but at the expense of some theoretical guarantees.
 
-state representations
----------------------
+### state representations
 
 Imagine a task in which the true dimensionality of the state space is $\mathbb{R}^2$. In mountain car, for example, the state is simply the position and velocity of the car. In this case the true value function (for the optimal policy) can be visualized as a surface in $\mathbb{R}^2$, and it is quite complex:
 
@@ -332,27 +304,23 @@ Now consider a linear value function that takes a weighted sum of the state repr
 
 Overlapping grids allow generalization to occur. We can also encourage generalization in particular dimensions/directions by creating longer rectangles or even full stripes that extend in the direction that generalization should occur.
 
-function approximators
-----------------------
+### function approximators
 
 Anything differentiable can be used for $\hat{v}$, such as an artificial neural network or linear regression.
 
 There are also non-parametric approaches to function approximation. For example, a nearest neighbors approach could take the mean of the $k$ visited states that are closest to the current state. Or we could take a mean across all visited states weighted by their closeness. Kernel methods use a function $k(s,s')$ that assigns a weight for each $s'$ when estimating the value of $s$: $\hat{v}(s,\mathbf{w}) = \sum_{s' \in \mathcal{D}} k(s,s') g(s')$. Here $g(s')$ is the target (e.g. return for monte carlo, bootstraped return for TD(0)) for the previously visited state $s'$.
 
-control with function approximation
------------------------------------
+### control with function approximation
 
 To use function approximation for control rather than prediction, we can learn an action-value function and follow a policy that acts greedily with respect to it. Following the pattern above, we can update our weights (for example by following a SARSA target) as: $$\mathbf{w_{t+1}} = \mathbf{w_{t}} + \alpha \left[{\color{blue}R_t + \gamma \hat{q}_\pi(S_{t+1}, A_{t+1}, \mathbf{w})} - \hat{q}_\pi(S_t, A_t, \mathbf{w})\right] \nabla \hat{v}_\pi(S_{t}, \mathbf{w})$$
 
-differential returns
-====================
+## differential returns
 
 Rather than considering rewards at each time step, we can ask how each reward differs from the average reward, $r(\pi)$, under our current policy. Differential returns are defined as: $$G_t = R_{t+1} - r(\pi) + R_{t+2} - r(\pi) + R_{t+3} - r(\pi) + \dots$$ With differential returns we can avoid discounting in the continuous case, as there is no concern that the returns will explode. Differential returns can be used, for example, in Bellman equations and TD updates, as follows: $$\begin{gathered}
 v_\pi(s) = \sum_a \pi(a \mid s) \sum_{s',r} p(s',r \mid s, a) \left[r - r(\pi) + \gamma v_\pi(s') \right] \\
 \delta_t = {\color{blue} R_{t+1} - \bar{R}_t + \hat{v}_\pi(S_{t+1}, \mathbf{w}_t)} - \hat{v}_\pi(S_t, \mathbf{w}_t)\end{gathered}$$ $\bar{R}_t$ is our estimate of $r(\pi)$ at time $t$. Notice that we need to keep a running estimate of the average reward. By analogy to how we update value functions in TD methods, we might select the update rule $\bar{R}_{t+1} \leftarrow \bar{R}_t + \beta [R_{t+1} - \bar{R}_t]$. However, it turns out that using $\delta_t$ reduces the variance of our updates: $\bar{R}_{t+1} \leftarrow \bar{R}_t + \beta \delta_t$
 
-$\lambda$ return
-================
+## $\lambda$ return
 
 $n$-step returns ($G_{t:t+n}$) allow us to control the extent to which we rely on sampling (big $n$) vs. bootstrapping (small $n$). Rather than picking a single $n$, we can take take an exponentially weighted average of $n$-step returns for all $n$: $$G_t^\lambda = (1-\lambda) \sum_{n=1}^\infty \lambda^{n-1}G_{t:t+n}$$ $(1-\lambda)$ ensure the weights sum to 1. Note that for $\lambda=0$ this reduces to a one step return, whereas for $\lambda=1$ it is a monte carlo return. The weighting scheme is visualized as follows. Notice that all returns which reach the terminal state are collectively given the rest of the weight:
 
@@ -368,18 +336,15 @@ G_{t:t+k}^\lambda
 &= (1-\lambda) \sum_{n=1}^{k-1} \lambda^{n-1}G_{t:t+n} + \lambda^{k-1}(1-\lambda) \sum_{n=1}^{\infty} \lambda^{n-1} G_{t:t+k} & \scriptstyle{\text{re-index and factor out $\lambda^{k-1}$}} \\
 &= (1-\lambda) \sum_{n=1}^{k-1} \lambda^{n-1}G_{t:t+n} + \underbrace{\lambda^{k-1}G_{t:t+k}}_\text{residual weight} & \scriptstyle{\text{because $\sum_{n=1}^{\infty} \lambda^{n-1} = \frac{1}{1-\lambda}$}}\end{aligned}$$
 
-offline $\lambda$ return algorithm
-----------------------------------
+### offline $\lambda$ return algorithm
 
 The *offline $\lambda$ return algorithm* performs weight updates after each episode according to the $\lambda$ return at each time point using semi-gradient ascent as follows: $$\mathbf{w}_{t+1} = \mathbf{w}_t + \alpha \left[G_t^\lambda - \hat{v}(S_t, \mathbf{w}_t) \right] \nabla_\mathbf{w} \hat{v}(S_t, \mathbf{w}_t)$$
 
-online $\lambda$ return algorithm
----------------------------------
+### online $\lambda$ return algorithm
 
 We can perform truncated $\lambda$ return updates online, but this requires a trick. If we are interested in $5$-step $\lambda$ returns, but we are only at $t=2$, we start by computing the $2$ -step return. Then when $t=3$, we go back and update our previous weight updates using the most recently available returns, and so on.
 
-forward vs. backward views
-==========================
+## forward vs. backward views
 
 Value functions are expectations over returns, which are a function of *future* rewards. Every time we encounter a state, we update it's value in the direction of immediate rewards, and to a lesser extent distant rewards. We continue moving state by state, associating rewards with states based on their temporal proximity.
 
@@ -389,8 +354,7 @@ For the backward view to work, we need to keep track of how recently we visited 
 
 ![image](reinforcement_learning/trace_decay.png){width=".7\linewidth"}
 
-TD($\lambda$)
--------------
+### TD($\lambda$)
 
 TD($\lambda$) *approximates* the offline $\lambda$-return using an efficient backward view algorithm. We first need to generalize eligibility traces to function approximation. Recall that the general formulation for weight updates is: $$\mathbf{w}_{t+1} = \mathbf{w}_t + \alpha \delta_t \nabla_\mathbf{w} \hat{v}(S_t, \mathbf{w}_t)$$ $\delta_t$ is the difference between the target and our current value estimate. This tells us how much we should be surprised by what is happening *now*. The associated update rule for the eligibility trace is: $$\mathbf{z}_{t} = \gamma \lambda \mathbf{z}_{t-1} + \nabla \hat{v}(S_t, \mathbf{w}_{t})$$ This more general eligibility trace no longer strictly reflects the recency of states. Rather, it reflects how elegible each element in $\mathbf{w}$ is for tweaking when something good or bad happens. It is like a smeared out version of the gradient. The new weight update is: $$\mathbf{w}_{t+1} = \mathbf{w}_t + \alpha \delta_t \mathbf{z}_t$$ At each time point, $\nabla \hat{v}(S_t, \mathbf{w}_{t})$ tells us how we would change each element in $\mathbf{w}$ to increase the value estimate of $S_t$. When things go better than expected, $\delta_t$ will be high. We then nudge $\mathbf{w}$ in the direction that increases the value of recent states, because $\mathbf{z}$ contains the gradients for past states exponentially weighted by their recency.
 
@@ -398,20 +362,17 @@ Notice that in the special case where $\mathbf{x}$ is a one-hot representation o
 
 We can construct SARSA($\lambda$) similarly by replacing the state-value function $v$ with the action-value function $q$.
 
-true TD($\lambda$) and dutch traces
------------------------------------
+### true TD($\lambda$) and dutch traces
 
 TD($\lambda$) only approximates the offline $\lambda$-return. However, by tweaking the eligibility trace and weight update formulas, we can achieve a backward view algorithm that is equivalent to the online $\lambda$-return. The new *dutch trace* and associated weight update are: $$\begin{gathered}
 \mathbf{z}_{t} = \gamma \lambda \mathbf{z}_{t-1} + (1 - \alpha \gamma \lambda\mathbf{z}_{t-1}^\top \mathbf{x}_{t})\mathbf{x}_{t} \\
 \mathbf{w}_{t+1} = \mathbf{w}_{t} + \alpha \delta_t \mathbf{z}_{t} + \alpha (\mathbf{w}_{t}^\top\mathbf{x}_{t} - \mathbf{w}_{t-1}^\top\mathbf{x}_{t}) (\mathbf{z}_{t} - \mathbf{x}_{t})\\\end{gathered}$$ A proof for the equivalence of the forward and backward views using dutch traces is provided in the text for the case of monte carlo control without discounting (section 12.6).
 
-policy gradient
-===============
+## policy gradient
 
 Up to this point we have been learning value functions, which can be used to guide policy. Policy gradient methods directly learn the parameters for the policy. To do this we gradually tweak our policy parameters $\theta$ in the direction that increases the amount of reward we expect under our policy. We therefore need to take the gradient of some performance metric $J(\theta)$ with respect to $\theta$ and update according to: $\theta_{t+1} = \theta_t + \nabla J(\theta)$.
 
-policy gradient theorem
------------------------
+### policy gradient theorem
 
 There's a difficultly with this approach. The amount of reward we expect depends on the policy, which we can differentiate, but also on the distribution of states, which depends on potentially complex interactions between the policy and the environment. The policy gradient theorem solves this problem.
 
@@ -424,8 +385,7 @@ $$\begin{aligned}
 
 It turns out the policy gradient theorem also holds in continuing problems if we define $J(\theta)$ to be the average *rate* of reward: $$J(\theta) = \sum_s \mu(s) \sum_a \pi (a \mid s) \sum_{s',r} p(s',r \mid s, a) r$$
 
-policy gradient theorem proof
------------------------------
+### policy gradient theorem proof
 
 In episodic settings we want to take the gradient of $J(\theta) = v(s_0)$. Let's start by taking the gradient for any $s$. First we'll establish a recursive relationship between the value of a state and the subsequent state. For simplicity we will not use discounting: $$\begin{aligned}
 \nabla v(s)
@@ -451,8 +411,7 @@ $$\begin{aligned}
 &= \sum_{s'} \eta(s') \sum_{s} \mu(s) \phi(x) \\
 &\propto \sum_{s} \mu(s) \sum_a q(s,a) \nabla \pi(s \mid a) \\\end{aligned}$$
 
-REINFORCE
----------
+### REINFORCE
 
 Let's put the policy gradient theorem to use. Although we don't know the true distribution of states $\mu(s)$, we can continuously sample states under the current policy to approximate the distribution without bias. This monte carlo approach relies of the fact that:0 $$\begin{aligned}
 \nabla J(\theta)
@@ -470,8 +429,7 @@ The following algorithm uses monte carlo to learn both the weights for the polic
 
 ![image](reinforcement_learning/reinforce_baseline.jpg){width=".9\linewidth"}
 
-actor-critic
-------------
+### actor-critic
 
 REINFORCE has no bias because it relies on sample returns, but it can suffer from high variance. We can reduce the variance (while introducing bias) by constructing bootstrapped targets, e.g. by replacing $G_t$ with a one-step TD target:
 
@@ -479,7 +437,6 @@ $$\theta_{t+1} = \theta + \alpha \left[R_{t+1} + \gamma \hat{v}(S_{t+1}) - \hat{
 
 Here the *critic* learns the value function and the *actor* learns to update the policy to increase future reward.
 
-policy parameterizations
-------------------------
+### policy parameterizations
 
 Policy gradient methods present a natural way of dealing with large or continuous action spaces. Rather than learning probability mass functions over many different actions, we can directly learn the parameters of probability distributions, for example the mean and standard deviation of gaussians in action space.
