@@ -14,13 +14,13 @@ Being quarantined in NYC has given me the opportunity to finally work through [t
 {% include toc %}
 <br>
 
+
 # motivation
 Despite their neuro-inspired-namesakes, many modern deep learning algorithms can feel rather 'non-bioligcal'. Consider how living things learn. To teach my nephew the difference between cats and dogs, I *do not* show him thousands of cats and dogs until the (non-artificial) neural networks in his brain can distinguish them.
 
 Moreover, much of what he learns is via *direct interaction with the world*. He knows what he likes and doesn't like, and through trial in error he maximizes the good stuff and minimizes the bad stuff. Although this isn't the only way animals learn (despite what [some psychologists used to think](https://en.wikipedia.org/wiki/Behaviorism)), it is a powerful approach to navigating the world.
 
 Reinforcement learning turns this approach into powerful learning algorithms that are [sometimes](https://deepmind.com/research/case-studies/alphago-the-story-so-far) [superhuman](https://deepmind.com/research/publications/playing-atari-deep-reinforcement-learning). [Sutton & Barto](http://incompleteideas.net/book/the-book-2nd.html) is the classic introductory text on reinforcement learning. The following is my summary of the text.
-
 
 
 # setup
@@ -48,15 +48,19 @@ $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \dots = \sum_{k=0}^\infty 
 
 Note that we can define returns recursively. Such recursive relationships are critical to many important ideas in reinforcement learning:
 
-$$\begin{align}
+$$ \begin{align}
 G_t &= R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \gamma^3R_{t+4} + \dots \\
 &= R_{t+1} + \gamma(R_{t+2} + \gamma R_{t+3} + \gamma^2R_{t+4} +\dots) \\
 &= R_{t+1} + \gamma G_{t+1}
-\end{align}$$
+\end{align} $$
+
+$$ \begin{align}
+test = equation
+\end{align} $$
 
 How can we maximize returns? A first thought might be to optimize the parameters of some policy with respect to the overall expected return (we'll get to these **policy gradient** methods later). An alternative approach is to learn how good different states are. We can then maximize returns by selecting actions that move us to the best states.
 
-A **value function** describes how good different states are. Specifically, it tells us how much return we should expect in a given state (1):
+A **value function** describes how good different states are. Specifically, it tells us how much return we should expect in a given state:
 
 $$
 \begin{align*}
