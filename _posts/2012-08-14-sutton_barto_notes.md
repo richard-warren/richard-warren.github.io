@@ -56,14 +56,14 @@ G_t &= R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \gamma^3R_{t+4} + \dots \\
 
 How can we maximize returns? A first thought might be to optimize the parameters of some policy with respect to the overall expected return (we'll get to these **policy gradient** methods later). An alternative approach is to learn how good different states are. We can then maximize returns by selecting actions that move us to the best states.
 
-A **value function** describes how good different states are. Specifically, it tells us how much return we should expect in a given state:
+A **value function** describes how good different states are. Specifically, it tells us how much return we should expect in a given state (1):
 
 $$
-\begin{align}
+\begin{align*}
 v_\pi (s) &= \mathbb{E}[G_t \mid S_t=s] \\
 &= \mathbb{E}[R_{t+1} + \gamma G_{t+1} \mid S_t=s] \\
 &= \sum_a \pi (a|s) \sum_{s', r} p(s',r|s,a) [r + \gamma v_\pi (s')]
-\end{align}
+\end{align*}
 $$
 
 Note that $R_t$ and $G_t$ are *random variables*. The reward at a given time depends on the action selected, $A_t \sim \pi (a \mid s)$ and the (potentially) stochastic environment dynamics, $R_{t+1}, S_{t+1} \sim p(s',r \mid s,a)$. Therefore, when we query the value of given state, we must consider all possible actions, subsequent states, and subsequent rewards, each weighted by their corresponding probability. For this reason $\mathbb{E}[R_{t+1}] = \sum_a \pi (a \mid s) \sum_{s', r} p(s', r \mid s, a)r$.
@@ -73,21 +73,22 @@ The final line above is a **Bellman equation**, which recursively relates $v_\pi
 $v_\pi(s)$ is a **state-value function** because it reports the value of specific states. We will also consider **action-value** functions, which report the value of state-action pairs, i.e. the expected return conditioned on a particular state-action pair:
 
 $$
-\begin{aligned}
+\begin{align}
 q_\pi(s,a) &= \mathbb{E}[G_t | S_t=s, A_t=a] \\
 &= \sum_{s',r} p(s', r | s, a) [r + \gamma v(s')] & \scriptstyle{\text{average over potential $s',r$ resulting from action $a$}} \\
 &= \sum_{s',r} p(s', r | s, a) [r + \gamma \sum_{a'} \pi(a' | s') q(s', a')] & \scriptstyle{\text{state-value is average over action-values}}
-\end{aligned}
+\end{align}
 $$
 
 An **optimal policy** yields the highest possible return. The optimal state-value and action-value functions are denoted $v_*$ and $q_*$, respectively. They can be recursively defined using the **Bellman optimality equations**:
 
 $$
-\begin{aligned}
+\begin{align}
 v_*(s) &= \max_\pi v_\pi(s) \\
 &= \max_a \sum_{s', r} p(s',r | s,a) [r + \gamma v_*(s')] \\
 q_*(s,a) &= \max_\pi q_\pi(s,a) \\
-&= \sum_{s', r} p(s',r | s,a) [r + \gamma \max_{a'} q_*(s', a')] \\\end{aligned}
+&= \sum_{s', r} p(s',r | s,a) [r + \gamma \max_{a'} q_*(s', a')]
+\end{align}
 $$
 
 Notice that the Bellman *optimality* equations take the max rather than the expectation over actions. This means that an optimal policy will always select actions that lead to the best possible subsequent state.
