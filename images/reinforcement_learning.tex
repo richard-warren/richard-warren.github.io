@@ -16,7 +16,7 @@ Our policy should not only encourage the acquisition of immediate reward, but al
 $$ G_t = R_{t+1} + R_{t+2} + \dots + R_{T}$$
 This is an \textit{undiscounted return} because it equally weights all rewards. It is common to exponentially discount future rewards using a \textit{discount factor} $\gamma$ (animals exhibit similar temporal discounting):
 $$
-G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \dots =
+G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \dots = 
 \sum_{k=0}^\infty \gamma^k R_{t+k+1}
 $$
 Note that we can define returns \textit{recursively}. Such recursive relationships are critical to many important ideas in reinforcement learning:
@@ -54,7 +54,7 @@ q_*(s,a) &= \max_\pi q_\pi(s,a) \\
 \end{align*}
 This says that if our policy is optimal, we will always select actions that get us to the best possible subsequent state.
 
-Many of these formulas can be intuited by drawing \textit{backup diagrams}. In backup diagrams, states are open circles and actions are black dots. The transitions from states (circles) to actions (dots) are governed by the policy $\pi(a \mid s)$. The transitions from actions (dots) to subsequent states (circles) are governed by the environment dynamics $p(s',r \mid s,a)$.
+Many of these formulas can be intuited by drawing \textit{backup diagrams}. In backup diagrams, states are open circles and actions are black dots. The transitions from states (circles) to actions (dots) are governed by the policy $\pi(a \mid s)$. The transitions from actions (dots) to subsequent states (circles) are governed by the environment dynamics $p(s',r \mid s,a)$. 
 
 Note that for $v_*$ we only consider the action with the maximum return (maximizing denoted by the arc symbol). Also note that each action can result in several possible states and rewards; this is why we need to average over these branches. Similarly, for $q_*$ we already know the state and action, but we must average over the potential states an rewards resulting from that action, followed by taking the action that maximizes our subsequent $q_*$ value.
 
@@ -70,9 +70,9 @@ Let's begin with \textit{policy evaluation}, or \textit{prediction}. This is the
 v_{k+1}(s) &= \mathbb{E}[R_{t+1} + \gamma v(S_{t+1}) | S_t = s] \\
 &= \sum_a \pi(a|s) \sum_{s',r} p(s',r|s,a) [r + \gamma v_k(s')]
 \end{align*}
-Keep in mind that this approach is biased. We are using an (initially) inaccurate estimate of subsequent states to update the value of the current state. Nonetheless, repeatedly applying this update (by repeatedly looping over all states) causes our estimate of the value function to converge on the true value function.
+Keep in mind that this approach is biased. We are using an (initially) inaccurate estimate of subsequent states to update the value of the current state. Nonetheless, repeatedly applying this update (by repeatedly looping over all states) causes our estimate of the value function to converge on the true value function. 
 
-Once we have an accurate value function we can update the policy by \textit{acting greedily with respect to it}. For example, if our policy says go left, but our value function says going right leads to a better state, we update our policy accordingly.
+Once we have an accurate value function we can update the policy by \textit{acting greedily with respect to it}. For example, if our policy says go left, but our value function says going right leads to a better state, we update our policy accordingly. 
 
 But this leads to a problem. Our value function was defined with respect to $\pi_t$, but now we've updated the policy to $\pi_{t+1}$, which means our value function is no longer accurate! We therefore need to go back and update our value function again. We can then repeat the process of updating our value function and then our policy until we converge on an optimal policy. The algorithm is:
 \begin{center}\includegraphics[width=.9\linewidth]{reinforcement_learning/policy_iteration.png}\end{center}
@@ -194,14 +194,14 @@ Intuitively, taking larger $n$ allows us to see further back when assigning cred
 
 \section{the big picture}
 \subsection{breadth vs. depth}
-The methods we've applied so far vary in breadth and depth. Methods that bootstrap (DP and TD) are shallow in that they only step a little into the future before bootstrapping. Monte Carlo is deep in that it samples until the end of trajectories. Furthermore, methods that take expectations over actions are wide, such as DP, whereas both TD and Monte Carlo can be thought of as narrow because they rely on sampling rather than averaging over actions.
+The methods we've applied so far vary in breadth and depth. Methods that bootstrap (DP and TD) are shallow in that they only step a little into the future before bootstrapping. Monte Carlo is deep in that it samples until the end of trajectories. Furthermore, methods that take expectations over actions are wide, such as DP, whereas both TD and Monte Carlo can be thought of as narrow because they rely on sampling rather than averaging over actions. 
 
-Methods exist in between these extremes and can be thought of as living in a space characterized by two axes. These axes represent the extent to which a method relies on sampling vs. expectations (narrow vs. wide), and bootstrapping vs. sampling (shallow vs. deep):
+Methods exist in between these extremes and can be thought of as living in a space characterized by two axes. These axes represent the extent to which a method relies on sampling vs. expectations (narrow vs. wide), and bootstrapping vs. sampling (shallow vs. deep): 
 
 \begin{center}\includegraphics[width=.6\linewidth]{reinforcement_learning/rl_bigpicture.PNG}\end{center}
 
 \subsection{value function updates}
-The value function updates we've considered differ in whether they 1) update the state or action value function, 2) approximate the optimal or an arbitrary policy, and 3) rely on sample or expected updates. The different combinations of these three binary dimensions yield the following family of value function updates:
+The value function updates we've considered differ in whether they 1) update the state or action value function, 2) approximate the optimal or an arbitrary policy, and 3) rely on sample or expected updates. The different combinations of these three binary dimensions yield the following family of value function updates: 
 
 \begin{center}\includegraphics[width=.5\linewidth]{reinforcement_learning/value_updates.PNG}\end{center}
 
@@ -355,7 +355,7 @@ A proof for the equivalence of the forward and backward views using dutch traces
 Up to this point we have been learning value functions, which can be used to guide policy. Policy gradient methods directly learn the parameters for the policy. To do this we gradually tweak our policy parameters $\theta$ in the direction that increases the amount of reward we expect under our policy. We therefore need to take the gradient of some performance metric $J(\theta)$ with respect to $\theta$ and update according to: $\theta_{t+1} = \theta_t + \nabla J(\theta)$.
 
 \subsection{policy gradient theorem}
-There's a difficultly with this approach. The amount of reward we expect depends on the policy, which we can differentiate, but also on the distribution of states, which depends on potentially complex interactions between the policy and the environment. The policy gradient theorem solves this problem.
+There's a difficultly with this approach. The amount of reward we expect depends on the policy, which we can differentiate, but also on the distribution of states, which depends on potentially complex interactions between the policy and the environment. The policy gradient theorem solves this problem. 
 
 Consider the episodic case, in which performance can be defined as the expected return in the start state, $v(s_0)$. The policy gradient theorem gives the following derivative, where $\mu(s)$ is the stationary distribution of states under $\pi$:
 
@@ -429,7 +429,7 @@ REINFORCE has no bias because it relies on sample returns, but it can suffer fro
 
 $$ \theta_{t+1} = \theta + \alpha \left[R_{t+1} + \gamma \hat{v}(S_{t+1}) - \hat{v}(S_t) \right] \nabla \ln \pi (A_t \mid S_t)$$
 
-Here the \textit{critic} learns the value function and the \textit{actor} learns to update the policy to increase future reward.
+Here the \textit{critic} learns the value function and the \textit{actor} learns to update the policy to increase future reward.  
 
 \subsection{policy parameterizations}
 Policy gradient methods present a natural way of dealing with large or continuous action spaces. Rather than learning probability mass functions over many different actions, we can directly learn the parameters of probability distributions, for example the mean and standard deviation of gaussians in action space.

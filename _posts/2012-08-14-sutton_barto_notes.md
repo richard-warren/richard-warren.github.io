@@ -5,36 +5,48 @@ permalink: /blog/reinforcement_learning_intro/
 tags:
   - reinforcement learning
   - machine learning
+read_time: false
 ---
 
-Being quarantined in NYC has given me the opportunity to finally work through [the classic text](http://incompleteideas.net/book/the-book-2nd.html) on reinforcement learning (RL). Here is a summary of the text for those interested in familiarizing themselves with RL who are *not* interested in staying in their apartment for three months to accomplish this :grimacing:.
+Being quarantined in NYC has given me the opportunity to finally work through [the classic text](http://incompleteideas.net/book/the-book-2nd.html) on reinforcement learning (RL). This summary of the text is intended for those interested in learning RL who are *not* interested in staying in their apartment for three months to learn it :grimacing:.
 
 
 {% include toc %}
 <br>
 
-# overview
-Reinforcement learning considers an *agent* that collects *reward* by acting in its *environment*. The goal is to find a policy $\pi(a|s)$ that maps states to probability distributions over actions such that we get as much reward as possible. At time $t$ the state of the environment is $S_t \in \mathcal{S}$, and an agent can take an action $A_t \in \mathcal{A}(s)$. The environment then emits a reward $R_{t+1} \in \mathbb{R}$ and a subsequent state, $S_{t+1}$. Notice how the reward is just a scalar. From this sparse information the agent must learn to behave such that reward is maximized.
+# motivation
+Despite their neuro-inspired-namesakes, many modern deep learning algorithms can feel rather 'non-bioligcal'. Consider how living things learn. To teach my nephew the difference between cats and dogs, I *do not* show him thousands of cats and dogs until the (non-artificial) neural networks in his brain can distinguish them.
 
-<!-- ![image](reinforcement_learning/agent_environment.png){width=".75\linewidth"} -->
+Moreover, much of what he learns is via *direct interaction with the world*. He knows what he likes and doesn't like, and through trial in error he maximizes the good stuff and minimizes the bad stuff. Although this isn't the only way animals learn (despite what [some psychologists used to think](https://en.wikipedia.org/wiki/Behaviorism)), it is a powerful approach to navigating the world.
 
-The interactions between the agent, its actions, and the environment can be usefully modelled as Markov Decision Processes (MDPs). In Markov systems *the future is independent of the past given the present*. The current state of the world tells you everything you need to know about what will happen next. Formally, $P(S_{t+1} \mid S_t) = P(S_{t+1} \mid S_0, S_1, \dots, S_{t})$. If the agent doesn't have complete information about the state of the world (i.e. it is *partially observed*), a markovian environment can be non-markovian from the perspective of the agent.
+Reinforcement learning turns this approach into powerful learning algorithms that are [sometimes](https://deepmind.com/research/case-studies/alphago-the-story-so-far) [superhuman](https://deepmind.com/research/publications/playing-atari-deep-reinforcement-learning). [Sutton & Barto](http://incompleteideas.net/book/the-book-2nd.html) is the classic introductory text on reinforcement learning. The following is my summary of the text.
+
+
+
+# setup
+In reinforcement learning an **agent** collects **reward** by acting in an **environment**. The **actions** of the agent, together with the dynamics of the environment, determine how the **state** of the world changes and the amount of reward the agent gets. The goal is to get lots of reward by selecting good actions. Concretely, the agent has a **policy** $\pi(a|s)$ that maps states to actions. More specifically, $\pi(a|s)$ defines a *probability distribution* over actions conditioned on the state. We want to find a policy that gives us as much reward as possible.
+
+At time $t$ the state of the environment is $S_t \in \mathcal{S}$ and an agent can take an action $A_t \in \mathcal{A}(s)$. The environment then emits a reward $R_{t+1} \in \mathbb{R}$ and a subsequent state, $S_{t+1}$. Notice how the reward is just a scalar. *From this sparse information the agent must learn to behave such that reward is maximized*. This should strike you as somewhat magical.
+
+![image](/images/agent_environment.PNG){: .align-center}
+
+The interactions between an agent, its actions, and the environment can be usefully modelled as a Markov Decision Process (MDP). In Markov systems the current state of the world tells you everything you need to know about what will happen next. In other words, *the future is independent of the past given the present*. Formally, $P(S_{t+1} \mid S_t) = P(S_{t+1} \mid S_0, S_1, \dots, S_{t})$. importantly, if the agent doesn't have complete information about the state of the world (i.e. it is *partially observed*), a markovian environment can be non-markovian from the perspective of the agent.
 
 Given a state $s$ and action $a$, the probability of moving to a new state $s'$ with reward $r$ is given by the following. Note that this maps four arguments to a single value, $p : \mathcal{S} \times \mathcal{S} \times \mathcal{A} \times \mathcal{R} \rightarrow [0,1]$.
 
 $$ p(s', r | s, a) = Pr(S_t=s', R_t=r | S_{t-1}=s, A_{t-1}=a) $$
 
-The function $p(s',r \mid s,a)$ captures the dynamics of the environment. In model-based reinforcement learning we know (or learn) these dynamics, whereas in model-free methods we don't use them at all.
+The function $p(s',r \mid s,a)$ describes the dynamics of the environment. In **model-based** reinforcement learning we know (or learn) these dynamics, whereas in **model-free** methods we don't use them at all.
 
-Our policy should not only encourage the acquisition of immediate reward, but also future reward. We therefore want to maximize *returns*, which are a function of *reward sequences*:
+Our policy should not only encourage the acquisition of immediate reward, but also future reward. We therefore want to maximize **returns**, which are a function of *reward sequences*. For example:
 
 $$ G_t = R_{t+1} + R_{t+2} + \dots + R_{T} $$
 
-This is an *undiscounted return* because it equally weights all rewards. It is common to exponentially discount future rewards using a *discount factor* $\gamma$ (animals exhibit similar temporal discounting):
+This is an undiscounted return because it equally weights all rewards. It is common to exponentially discount future rewards using a **discount factor** $\gamma$ (animals exhibit similar temporal discounting :mouse:):
 
 $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \dots = \sum_{k=0}^\infty \gamma^k R_{t+k+1} $$
 
-Note that we can define returns *recursively*. Such recursive relationships are critical to many important ideas in reinforcement learning:
+Note that we can define returns recursively. Such recursive relationships are critical to many important ideas in reinforcement learning:
 
 $$
 \begin{aligned}
@@ -44,19 +56,33 @@ G_t &= R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \gamma^3R_{t+4} + \dots \\
 \end{aligned}
 $$
 
-How can we maximize returns? A first thought might be to optimize the parameters of some policy with respect to the overall expected return (these are called *policy gradient* methods). An alternative approach is to learn how good different states are. We can then maximize returns by selecting actions that move us to the best states.
+How can we maximize returns? A first thought might be to optimize the parameters of some policy with respect to the overall expected return (we'll get to these **policy gradient** methods later). An alternative approach is to learn how good different states are. We can then maximize returns by selecting actions that move us to the best states.
 
-A *value function* captures how good different states are. Specifically, it tells us how much return we should expect in a given state: $$\begin{aligned}
+A **value function** describes how good different states are. Specifically, it tells us how much return we should expect in a given state:
+
+$$
+\begin{aligned}
 v_\pi (s) &= \mathbb{E}[G_t \mid S_t=s] \\
 &= \mathbb{E}[R_{t+1} + \gamma G_{t+1} \mid S_t=s] \\
-&= \sum_a \pi (a|s) \sum_{s', r} p(s', r | s, a) [r + \gamma v_\pi (s')]\end{aligned}$$ Note that $R_t$ and $G_t$ are *random variables*. The reward at a given time depends on the action select, $A_t \sim \pi (a \mid s)$, and the (potentially) stochastic environment dynamics, $R_t \sim p(s',r|s,a)$. Therefore, $\mathbb{E}[R_{t+1}] = \sum_a \pi (a|s) \sum_{s', r} p(s', r | s, a)r$.
+&= \sum_a \pi (a|s) \sum_{s', r} p(s',r|s,a) [r + \gamma v_\pi (s')]
+\end{aligned}
+$$
 
-The final line is a *Bellman equation*, which recursively relates $v_\pi$ to itself. It says that the goodness of this state is the reward I expect immediately (averaging across all actions), plus the discounted goodness of the subsequent states (averaging across all subsequent states for each action). Notice that when we query the value of given state, we must consider all actions, subsequent states, and subsequent rewards, each weighted by their corresponding probabilities.
+Note that $R_t$ and $G_t$ are *random variables*. The reward at a given time depends on the action selected, $A_t \sim \pi (a \mid s)$ and the (potentially) stochastic environment dynamics, $R_{t+1}, S_{t+1} \sim p(s',r \mid s,a)$. Therefore, when we query the value of given state, we must consider all possible actions, subsequent states, and subsequent rewards, each weighted by their corresponding probability. For this reason $\mathbb{E}[R_{t+1}] = \sum_a \pi (a \mid s) \sum_{s', r} p(s', r \mid s, a)r$.
 
-The value function $v_\pi(s)$ is a *state-value* function because it reports the value of specific states. We will also consider *action-value* functions, which report the value of state-action pairs. $$\begin{aligned}
+The final line above is a **Bellman equation**, which recursively relates $v_\pi$ to itself. This Bellman equation states that the goodness of a state is the reward expected immediately (averaging across all actions), plus the discounted goodness of the subsequent states (averaging across all subsequent states for each action).
+
+$v_\pi(s)$ is a **state-value function** because it reports the value of specific states. We will also consider **action-value** functions, which report the value of state-action pairs, i.e. the expected return conditioned on a particular state-action pair:
+
+$$
+\begin{aligned}
 q_\pi(s,a) &= \mathbb{E}[G_t | S_t=s, A_t=a] \\
-&= \sum_{s',r} p(s', r | s, a) [r + \gamma v(s')] & \scriptstyle{\text{average over potential $s',r$}} \\
-&= \sum_{s',r} p(s', r | s, a) [r + \gamma \sum_{a'} \pi(a' | s') q(s', a')] & \scriptstyle{\text{state-value is average over action-values}}\end{aligned}$$ The optimal policy $\pi_*$ yields the highest return for all states. The optimal state-value and action-value functions are denoted $v_*$ and $q_*$, respectively. They can be recursively defined using the *Bellman optimality equations*:
+&= \sum_{s',r} p(s', r | s, a) [r + \gamma v(s')] & \scriptstyle{\text{average over potential $s',r$ resulting from action $a$}} \\
+&= \sum_{s',r} p(s', r | s, a) [r + \gamma \sum_{a'} \pi(a' | s') q(s', a')] & \scriptstyle{\text{state-value is average over action-values}}
+\end{aligned}
+$$
+
+An **optimal policy** yields the highest possible return. The optimal state-value and action-value functions are denoted $v_*$ and $q_*$, respectively. They can be recursively defined using the **Bellman optimality equations**:
 
 $$
 \begin{aligned}
@@ -66,16 +92,15 @@ q_*(s,a) &= \max_\pi q_\pi(s,a) \\
 &= \sum_{s', r} p(s',r | s,a) [r + \gamma \max_{a'} q_*(s', a')] \\\end{aligned}
 $$
 
-This says that if our policy is optimal, we will always select actions that get us to the best possible subsequent state.
+Notice that the Bellman *optimality* equations take the max rather than the expectation over actions. This means that an optimal policy will always select actions that lead to the best possible subsequent state.
 
-Many of these formulas can be intuited by drawing *backup diagrams*. In backup diagrams, states are open circles and actions are black dots. The transitions from states (circles) to actions (dots) are governed by the policy $\pi(a \mid s)$. The transitions from actions (dots) to subsequent states (circles) are governed by the environment dynamics $p(s',r \mid s,a)$.
+Many of these formulas can be intuited by drawing *backup diagrams*. In backup diagrams, states are represented by open circles and actions are black dots. Transitions from states (circles) to actions (dots) are governed by the policy $\pi(a \mid s)$. The transitions from actions (dots) to subsequent states (circles) are governed by the environment dynamics $p(s',r \mid s,a)$.
 
-Note that for $ v_* $ we only consider the action with the maximum return (maximizing denoted by the arc symbol). Also note that each action can result in several possible states and rewards; this is why we need to average over these branches. Similarly, for $q_*$ we already know the state and action, but we must average over the potential states an rewards resulting from that action, followed by taking the action that maximizes our subsequent $q_*$ value.
+Note that for $v_{* }$ we only consider the action with the maximum return (maximizing denoted by the arc symbol). Also note that each action can result in several possible states and rewards; this is why we need to average over these branches. Similarly, for $q_{* }$ we already know the state and action, but we must average over the potential states an rewards resulting from that action, followed by taking the action that maximizes our subsequent $q_*$ value.
 
-<!-- ![image](reinforcement_learning/backup_diagrams.png){width=".75\linewidth"} -->
+![image](/images/backup_diagrams.PNG){: .align-center}
 
-dynamic programming
-===================
+# dynamic programming
 
 We usually don't have complete access to the state of the world and its dynamics. When we do, *dynamic programming* can be used to iteratively converge on optimal policies. Generally, dynamic programming refers to algorithms in which a problem is decomposed into solvable sub-problems. If the same sub-problem is repeatedly encountered we can cache and re-use the solution.
 

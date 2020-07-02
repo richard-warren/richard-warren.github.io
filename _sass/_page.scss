@@ -48,6 +48,12 @@
   font-size: $type-size-4;
 }
 
+.page__date {
+  font-family: $global-font-family;
+  font-size: $type-size-6;
+  font-style: italic;
+}
+
 .page__content {
 
   h2 {

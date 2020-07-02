@@ -259,6 +259,11 @@
         height: 1px;
         background: mix(#fff, $accent-color, 50%);  // !!! change underline color in nav bar
         width: 100%;
+        -webkit-transition: $global-transition;
+        transition: $global-transition;
+        -webkit-transform: scaleX(1);
+            -ms-transform: scaleX(1);
+                transform: scaleX(1); /* hide*/
       }
     }
   }
