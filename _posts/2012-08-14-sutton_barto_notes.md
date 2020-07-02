@@ -48,23 +48,11 @@ $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \dots = \sum_{k=0}^\infty 
 
 Note that we can define returns recursively. Such recursive relationships are critical to many important ideas in reinforcement learning:
 
-$$ \begin{align}
-G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \gamma^3R_{t+4} + \dots \\
-= R_{t+1} + \gamma(R_{t+2} + \gamma R_{t+3} + \gamma^2R_{t+4} +\dots) \\
-= R_{t+1} + \gamma G_{t+1}
-\end{align} $$
-
-<!-- $$ \begin{align}
-G_t & = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \gamma^3 R_{t+4} + \dots
-\end{align} $$
-
-$$ \begin{align}
-G_t = R_{t+1}
-\end{align} $$
-
-$$ \begin{align}
-G_t &= R_{t+1}
-\end{align} $$ -->
+\begin{align}
+G_t &= R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \gamma^3R_{t+4} + \dots \\\\
+&= R_{t+1} + \gamma(R_{t+2} + \gamma R_{t+3} + \gamma^2R_{t+4} +\dots) \\\\
+&= R_{t+1} + \gamma G_{t+1}
+\end{align}
 
 How can we maximize returns? A first thought might be to optimize the parameters of some policy with respect to the overall expected return (we'll get to these **policy gradient** methods later). An alternative approach is to learn how good different states are. We can then maximize returns by selecting actions that move us to the best states.
 
