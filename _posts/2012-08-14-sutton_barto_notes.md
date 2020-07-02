@@ -48,24 +48,22 @@ $$ G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \dots = \sum_{k=0}^\infty 
 
 Note that we can define returns recursively. Such recursive relationships are critical to many important ideas in reinforcement learning:
 
-$$
-\begin{aligned}
+$$\begin{align}
 G_t &= R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + \gamma^3R_{t+4} + \dots \\
 &= R_{t+1} + \gamma(R_{t+2} + \gamma R_{t+3} + \gamma^2R_{t+4} +\dots) \\
 &= R_{t+1} + \gamma G_{t+1}
-\end{aligned}
-$$
+\end{align}$$
 
 How can we maximize returns? A first thought might be to optimize the parameters of some policy with respect to the overall expected return (we'll get to these **policy gradient** methods later). An alternative approach is to learn how good different states are. We can then maximize returns by selecting actions that move us to the best states.
 
 A **value function** describes how good different states are. Specifically, it tells us how much return we should expect in a given state:
 
 $$
-\begin{aligned}
+\begin{align}
 v_\pi (s) &= \mathbb{E}[G_t \mid S_t=s] \\
 &= \mathbb{E}[R_{t+1} + \gamma G_{t+1} \mid S_t=s] \\
 &= \sum_a \pi (a|s) \sum_{s', r} p(s',r|s,a) [r + \gamma v_\pi (s')]
-\end{aligned}
+\end{align}
 $$
 
 Note that $R_t$ and $G_t$ are *random variables*. The reward at a given time depends on the action selected, $A_t \sim \pi (a \mid s)$ and the (potentially) stochastic environment dynamics, $R_{t+1}, S_{t+1} \sim p(s',r \mid s,a)$. Therefore, when we query the value of given state, we must consider all possible actions, subsequent states, and subsequent rewards, each weighted by their corresponding probability. For this reason $\mathbb{E}[R_{t+1}] = \sum_a \pi (a \mid s) \sum_{s', r} p(s', r \mid s, a)r$.
