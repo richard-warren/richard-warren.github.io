@@ -8,18 +8,6 @@ tags:
 read_time: false
 ---
 
-**aligned equation test (2):**
-
-$$
-\begin{aligned}
-V(s) &= \mathbb{E}[G_t \vert S_t = s] \\
-&= \mathbb{E} [R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots \vert S_t = s] \\
-&= \mathbb{E} [R_{t+1} + \gamma (R_{t+2} + \gamma R_{t+3} + \dots) \vert S_t = s] \\
-&= \mathbb{E} [R_{t+1} + \gamma G_{t+1} \vert S_t = s] \\
-&= \mathbb{E} [R_{t+1} + \gamma V(S_{t+1}) \vert S_t = s]
-\end{aligned}
-$$
-
 
 Being quarantined in NYC has given me the opportunity to finally work through [the classic text](http://incompleteideas.net/book/the-book-2nd.html) on reinforcement learning (RL). This summary of the text is intended for those interested in learning RL who are *not* interested in staying in their apartment for three months to learn it :grimacing:.
 
@@ -41,7 +29,7 @@ In reinforcement learning an **agent** collects **reward** by acting in an **env
 
 At time $t$ the state of the environment is $S_t \in \mathcal{S}$ and an agent can take an action $A_t \in \mathcal{A}(s)$. The environment then emits a reward $R_{t+1} \in \mathbb{R}$ and a subsequent state, $S_{t+1}$. Notice how the reward is just a scalar. *From this sparse information the agent must learn to behave such that reward is maximized*. This should strike you as somewhat magical.
 
-![image](/images/agent_environment.PNG){: .align-center}
+![image](/images/sutton_barto_notes/agent_environment.png){: .align-center}
 
 The interactions between an agent, its actions, and the environment can be usefully modelled as a Markov Decision Process (MDP). In Markov systems the current state of the world tells you everything you need to know about what will happen next. In other words, *the future is independent of the past given the present*. Formally, $P(S_{t+1} \mid S_t) = P(S_{t+1} \mid S_0, S_1, \dots, S_{t})$. importantly, if the agent doesn't have complete information about the state of the world (i.e. it is *partially observed*), a markovian environment can be non-markovian from the perspective of the agent.
 
@@ -81,7 +69,7 @@ v_\pi (s) &= \mathbb{E}[G_t \mid S_t=s] \\
 \end{align*}
 $$
 
-Note that $R_t$ and $G_t$ are *random variables*. The reward at a given time depends on the action selected, $A_t \sim \pi (a \mid s)$ and the (potentially) stochastic environment dynamics, $R_{t+1}, S_{t+1} \sim p(s',r \mid s,a)$. Therefore, when we query the value of given state, we must consider all possible actions, subsequent states, and subsequent rewards, each weighted by their corresponding probability. For this reason $\mathbb{E}[R_{t+1}] = \sum_a \pi (a \mid s) \sum_{s', r} p(s', r \mid s, a)r$.
+Let's unpack the third line a bit. Note that $R_t$ and $G_t$ are *random variables*. The reward at a given time depends on the action selected, $A_t \sim \pi (a \mid s)$ and the (potentially) stochastic environment dynamics, $R_{t+1}, S_{t+1} \sim p(s',r \mid s,a)$. Therefore, when we query the value of given state, we must consider all possible actions, subsequent states, and subsequent rewards, each weighted by their corresponding probability. For this reason $\mathbb{E}[R_{t+1}] = \sum_a \pi (a \mid s) \sum_{s', r} p(s', r \mid s, a)r$.
 
 The final line above is a **Bellman equation**, which recursively relates $v_\pi$ to itself. This Bellman equation states that the goodness of a state is the reward expected immediately (averaging across all actions), plus the discounted goodness of the subsequent states (averaging across all subsequent states for each action).
 
@@ -112,7 +100,7 @@ Many of these formulas can be intuited by drawing *backup diagrams*. In backup d
 
 Note that for $v_{* }$ we only consider the action with the maximum return (maximizing denoted by the arc symbol). Also note that each action can result in several possible states and rewards; this is why we need to average over these branches. Similarly, for $q_{* }$ we already know the state and action, but we must average over the potential states an rewards resulting from that action, followed by taking the action that maximizes our subsequent $q_*$ value.
 
-![image](/images/backup_diagrams.PNG){: .align-center}
+![image](/images/sutton_barto_notes/backup_diagrams.png){: .align-center}
 
 # dynamic programming
 
