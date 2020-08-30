@@ -68,6 +68,7 @@ In addition to the parts listed in the hackaday protocol, all you need is:
 - An additional [Thorlabs PH1 post holder](https://www.thorlabs.com/thorproduct.cfm?partnumber=PH1#ad-image-0)
 - A [Thorlabs RM1F construction cube](https://www.thorlabs.com/thorproduct.cfm?partnumber=RM1F#ad-image-0)
 - [This custom piece](/files/encoder_mount.dxf) I designed (the units are inches in the .dxf file). Laser cut this piece in 1/8" acrylic and assemble as shown in the picture above.
+- A 1/4" shaft coupling (not shown in the picture above) to attach the shaft of the wheel to the rotary encoder. Something like [this](https://www.mcmaster.com/6208K457/) (a bit fancy) or [this](https://www.sparkfun.com/products/12251) (less fancy, will still work).
 
 ### rotary encoder software
 Okay, I was a little vague about how the digital rotary encoder output works above. See [this](http://makeatronics.blogspot.com/2013/02/efficiently-reading-quadrature-with.html) for an excellent explanation (with code). The basic idea is that when the state of the pins change you know the wheel has moved. You can figure out exactly how far by comparing the *counts per revolution* of your encoder (the numbers of periods of the square wave in one revolution) to the radius of the wheel. However, you don't know if it moved forward or backwards. You can solve the problem as follows:
