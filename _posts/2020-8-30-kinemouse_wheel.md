@@ -35,7 +35,7 @@ My setup is shown below. Ignore the linear track and all the 'hurdle' stuff:
 
 
 ### perspective distortion
-In an ideal world, the camera would be capturing an [orthographic projection](https://en.wikipedia.org/wiki/Orthographic_projection) of the stuff it is viewing. However, light bends as it enters the lens, leading to [perspective distortion](https://en.wikipedia.org/wiki/Perspective_distortion_(photography). This can reduce the accuracy of the 3D tracking, unless we want to calibrate our cameras using a software toolkit such as [anipose](https://github.com/lambdaloop/anipose).
+In an ideal world, the camera would be capturing an [orthographic projection](https://en.wikipedia.org/wiki/Orthographic_projection) of the stuff it is viewing. However, light bends as it enters the lens, leading to [perspective distortion](https://en.wikipedia.org/wiki/Perspective_distortion_(photography)). This can reduce the accuracy of the 3D tracking, unless we want to calibrate our cameras using a software toolkit such as [anipose](https://github.com/lambdaloop/anipose).
 
 Fortunately, there is an easy work around. Perspective distortion decreases as the camera is moved further away. I therefore keep my camera ~5 feet from the wheel. Make sure you get a camera lens that is appropriate for this distance though (see below).
 
