@@ -55,7 +55,7 @@
     <p class="archive__item-excerpt" itemprop="description"><p>{{ post.excerpt | markdownify | remove: '<p>' | remove: '</p>' }}<strong><a href="{{ base_path }}{{ post.url }}" rel="permalink"> Read more</a></strong></p></p>
     {% endif %} -->
 
-    <img align="left" src={{ post.image }} width=25% style="padding:1em 1em 1em 0px">
+    <img align="left" src={{ post.image }} width=250px style="padding:1em 1em 1em 0px">
     <p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify }}</p>
     <br style="clear: both">
 
