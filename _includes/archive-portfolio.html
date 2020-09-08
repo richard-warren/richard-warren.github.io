@@ -55,13 +55,18 @@
     <p class="archive__item-excerpt" itemprop="description"><p>{{ post.excerpt | markdownify | remove: '<p>' | remove: '</p>' }}<strong><a href="{{ base_path }}{{ post.url }}" rel="permalink"> Read more</a></strong></p></p>
     {% endif %} -->
 
+    <img align="left" src={{ post.image }} width=25% style="padding:1em 1em 1em 0px">
     <p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify }}</p>
-    <table width=100%>
+    <br style="clear: both">
+
+
+    <!-- <table width=100%>
       <tr valign="top">
-        <td width=40%> <img src={{ post.image }}> </td>
-        <td class="wtf" valign="top">{{ post.excerpt }}</td>
+        <td width=40%><img src={{ post.image }}></td>
+        <td>{{ post.excerpt }}</td>
+        <td>screen.width</td>
       </tr>
-    </table>
+    </table> -->
 
 
     {% if post.citation and post.paperurl %}
