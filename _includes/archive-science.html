@@ -49,9 +49,16 @@
         {% endif %}
 
     <!-- rick mod -->
-    <img align="left" src={{ post.image }} width=250 style="padding:1em 1em .5em 0px">
-    <p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify }}</p>
-    <br style="clear: both">
+    {% if post.video %}
+      <div class="youtube-wrapper" style="position: relative; width: 100%; padding:1em 1em .5em 0px">
+        <iframe src={{ post.video }} frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify }}</p
+    {% else %}
+      <img align="left" src={{ post.image }} width=250 style="padding:1em 1em .5em 0px">
+      <p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify }}</p>
+      <br style="clear: both">
+    {% endif %}
 
     {% if post.citation and post.paperurl %}
       <p>Recommended citation: {{ post.citation }} <a href="{{ post.paperurl }}"><u>{{ post.paperurl }}</u></a></p>
