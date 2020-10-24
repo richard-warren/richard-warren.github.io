@@ -30,7 +30,7 @@ I use two PointGrey cameras in my rig: a Grasshopper for the main camera ([GS3-U
 
 My setup is shown below. Ignore the linear track and all the 'hurdle' stuff:
 
-![](/images/portfolio/kinemouse_wheel.png){: .align-center}
+![](/images/blog/motion_tracking/hurdles_schematic.png){: .align-center}
 
 
 
@@ -61,7 +61,7 @@ I use [this](https://www.usdigital.com/products/encoders/incremental/shaft/S5) o
 ### rotary encoder mount
 I've designed a simple mount for [this specific rotary encoder](https://www.usdigital.com/products/encoders/incremental/shaft/S5):
 
-![](/images/portfolio/rotary_encoder.png){: .align-center}
+![](/images/blog/motion_tracking/rotary_encoder.png){: .align-center}
 
 In addition to the parts listed in the hackaday protocol, all you need is:
 - An additional [Thorlabs TR4 post](https://www.thorlabs.com/thorproduct.cfm?partnumber=TR4)
@@ -89,7 +89,7 @@ The creators or DeepLabCut and I discovered that [you can compress the heck out 
 ## 3D tracking
 I recommend using [DeepLabCut](http://www.mousemotorlab.org/deeplabcut) or [DeepPoseKit](https://github.com/jgraving/deepposekit) for tracking. For the main camera I train **a single network** on both of the views. I also have a camera focused on the whiskers that I use to tracked jaw, tongue, and whisker movements:
 
-![](/images/portfolio/mouse_tracking.png)
+![](/images/blog/motion_tracking/mouse_tracking.png)
 
 I rely on the following heuristics to stitch things together in 3D:
 - The x (anterior-posterior) position of the same feature (e.g. left forepaw) should be shared in both views because they are orthogonal.

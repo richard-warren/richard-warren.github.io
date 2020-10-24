@@ -19,6 +19,18 @@ tags:
 - math bits
   - taylor series expansion proof, with multivariate and vector form
 
+# bishop
+- 1.0
+  - supervised, unsupervised, rl
+  - train, test, generalization, training vs heuristics
+- 1.1
+  - data generating process ('model')
+  - model noise
+  - linear models (linear in weights, not necessarily weighted terms...)
+  - error functions, eg sum of squared errors
+  - model selection // overfitting
+  - regularization, ridge regression
+
 # topics / papers
 - DQN
 - DPG
