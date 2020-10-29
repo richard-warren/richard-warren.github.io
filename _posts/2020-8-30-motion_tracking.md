@@ -9,7 +9,7 @@ read_time: false
 ---
 
 
-Early in my PhD I developed an open-source motion tracking system for mice. With the KineMouse wheel neuroscientists can reconstruct 3D pose while recording neural activity. The [hackaday protocol](https://hackaday.io/project/160744-kinemouse-wheel) describes how to build the system. This supplement contains additional info for motion tracking aficionados. Please remember to treat your mice with respect ❤️🐭❤️.
+Early in my PhD I developed an open-source motion tracking system for mice. With the KineMouse wheel neuroscientists can reconstruct 3D pose while recording neural activity. The [hackaday protocol](https://hackaday.io/project/160744-kinemouse-wheel) describes how to build the system. This supplement contains additional info for motion tracking aficionados. Please be nice to your mice ❤️🐭❤️.
 
 {% include toc %}
 <br>
