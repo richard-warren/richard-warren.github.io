@@ -25,7 +25,7 @@ description
   - this is inference problem, but let's treat like optimization
   - reconstruction loss term
   - kl divergence regularization
-- prob perspective
+- prob perspective  
   - existence of joint prob distribution
   - see data, want to know latent state
   - don't just want z for every x, but prob dist over z, p(z|x)

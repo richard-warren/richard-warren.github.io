@@ -9,6 +9,6 @@ redirect_from:
   - /
 ---
 
-I use and develop machine learning tools to understand how movements are controlled by the brain. In the spring of 2021 I will be interning at [Google's DeepMind](https://deepmind.com/){:target="_blank"} prior to wrapping up my neuroscience PhD at Columbia University.
+I use and develop machine learning tools to understand how brains control behavior. In 2021 I will be interning at [Google's DeepMind](https://deepmind.com/){:target="_blank"}, then [Facebook Reality Labs](https://tech.fb.com/ar-vr/){:target="_blank"}, then completing my neuroscience PhD at Columbia University.
 
 ![](/images/mouse_kinematics.jpg)
